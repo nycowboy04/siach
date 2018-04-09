@@ -1,0 +1,11 @@
+{% if latest_contact_list %}
+  <ul>
+  {% for contact in latest_contact_list %}
+    <li><a href=url 'contact:detail' contact.id"{{contact.first_name}}</a></li>
+
+  {% endfor %}
+  </ul>
+
+{% else %}
+  <p>No contacts are available.</p>
+{% endif %}

@@ -1,13 +1,23 @@
-from django.shortcuts import render
-from django.http import HttpResponse
+from django.core.mail import send_mail, BadHeaderError
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect
+from .forms import ContactForm
 
-# Create your views here.
-def index(request, ):
-    #makes a list of the last 5 contact requests
-    latest_contact_list = Contact.objects.order_by('-pubdate')[:5]
-    #will print out a list of the messages in the contact list
-    output=', 'join([q.message for q in latest_contact_list])
-    return HttpResponse(output) 
+def emailView(request):
+    if request.method=='GET':
+        form=ContactForm()
+    else:
+        form - ContactForm(request.POST)
+        if form.is_valid():
+            subject=form.cleaned_data['subject']
+            from_email=form.cleaned_data['from_email']
+            message=form.cleaned_data['message']
+            try:
+                send_mail(subject,message,from_email,['machon_siach@sarhighschool.org']
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('success')
+    return render(request,"email.html",{'form':form})
 
-def detail(request, contact_id):
-    return HttpResponse("You're looking at contact %s." % contact_id)
+def successView(request):
+    return HttpResponse('Success! Thank you for your message')
